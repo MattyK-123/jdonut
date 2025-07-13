@@ -12,6 +12,23 @@
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <junit.version>RELEASE</junit.version>
     </properties>
+
+    <scm>
+        <connection>scm:git:git://github.com/MattyK-123/jdonut.git</connection>
+        <developerConnection>scm:git:git://github.com/MattyK-123/jdonut.git</developerConnection>
+        <url>https://github.com/MattyK-123/jdonut</url>
+        <tag>HEAD</tag>
+    </scm>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-engine</artifactId>
+            <version>${junit.version}</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
 
 </project>
