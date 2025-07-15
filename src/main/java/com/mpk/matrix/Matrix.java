@@ -4,14 +4,14 @@ import java.util.Arrays;
 import java.util.Objects;
 import java.util.function.DoubleBinaryOperator;
 
-public class DoubleMatrix {
+public sealed class Matrix permits Vec2, Vec3 {
 
     int rows;
     int cols;
 
-    double[] values;
+    protected final double[] values;
 
-    public DoubleMatrix(int rows, int cols) {
+    public Matrix(int rows, int cols) {
         if (rows <= 0 || cols <= 0) {
             throw new IllegalArgumentException("Matrix dimensions must be positive.");
         }
@@ -21,7 +21,7 @@ public class DoubleMatrix {
         this.values = new double[rows * cols];
     }
 
-    public DoubleMatrix(double[][] values) {
+    public Matrix(double[][] values) {
         if (values == null || values.length == 0 || values[0].length == 0) {
             throw new IllegalArgumentException("Matrix must have non-zero dimensions.");
         }
@@ -51,48 +51,60 @@ public class DoubleMatrix {
         values[row * cols + col] = value;
     }
 
-    public DoubleMatrix matmul(DoubleMatrix other) {
+    public Matrix matmul(Matrix other) {
         if (other.rows != this.cols) {
             throw new IllegalArgumentException("For matrix multiplication, the number of columns in the first matrix must be equal to the number of rows in the second matrix.");
         }
 
-        DoubleMatrix result = new DoubleMatrix(this.rows, other.cols);
+        Matrix result = new Matrix(this.rows, other.cols);
 
         for (int i = 0; i < this.rows; i++) {
             for (int j = 0; j < other.cols; j++) {
                 double sum = 0;
                 for (int k = 0; k < this.cols; k++) {
-                    sum += this.get(i, k) * other.get(k, j);
+                    sum += this.values[i * this.cols + k] * other.values[k * other.cols + j];
                 }
-                result.set(i, j, sum);
+                result.values[i * result.cols + j] = sum;
             }
         }
 
         return result;
     }
 
-    public DoubleMatrix add(DoubleMatrix other) {
+    public Matrix transpose() {
+        Matrix result = new Matrix(cols, rows);
+
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < cols; j++) {
+                result.values[j * rows + i] = values[i * cols + j];
+            }
+        }
+
+        return result;
+    }
+
+    public Matrix add(Matrix other) {
         return elementWiseOperation(other, (x, y) -> x + y);
     }
 
-    public DoubleMatrix subtract(DoubleMatrix other) {
+    public Matrix subtract(Matrix other) {
         return elementWiseOperation(other, (x, y) -> x - y);
     }
 
-    public DoubleMatrix multiply(DoubleMatrix other) {
+    public Matrix multiply(Matrix other) {
         return elementWiseOperation(other, (x, y) -> x * y);
     }
 
-    public DoubleMatrix divide(DoubleMatrix other) {
+    public Matrix divide(Matrix other) {
         return elementWiseOperation(other, (x, y) -> x / y);
     }
 
-    private DoubleMatrix elementWiseOperation(DoubleMatrix other, DoubleBinaryOperator operation) {
+    private Matrix elementWiseOperation(Matrix other, DoubleBinaryOperator operation) {
         if (other.rows != this.rows || other.cols != this.cols) {
             throw new IllegalArgumentException("Matrix dimensions do not match.");
         }
 
-        DoubleMatrix result = new DoubleMatrix(rows, cols);
+        Matrix result = new Matrix(rows, cols);
 
         for (int i = 0; i < values.length; i++) {
             result.values[i] = operation.applyAsDouble(this.values[i], other.values[i]);
@@ -110,29 +122,29 @@ public class DoubleMatrix {
         }
     }
 
-    public static DoubleMatrix add(DoubleMatrix a, DoubleMatrix b) {
+    public static Matrix add(Matrix a, Matrix b) {
         return a.add(b);
     }
 
-    public static DoubleMatrix subtract(DoubleMatrix a, DoubleMatrix b) {
+    public static Matrix subtract(Matrix a, Matrix b) {
         return a.subtract(b);
     }
 
-    public static DoubleMatrix multiply(DoubleMatrix a, DoubleMatrix b) {
+    public static Matrix multiply(Matrix a, Matrix b) {
         return a.multiply(b);
     }
 
-    public static DoubleMatrix divide(DoubleMatrix a, DoubleMatrix b) {
+    public static Matrix divide(Matrix a, Matrix b) {
         return a.divide(b);
     }
 
-    public static DoubleMatrix matmul(DoubleMatrix a, DoubleMatrix b) {
+    public static Matrix matmul(Matrix a, Matrix b) {
         return a.matmul(b);
     }
 
     @Override
     public boolean equals(Object o) {
-        if (!(o instanceof DoubleMatrix that)) return false;
+        if (!(o instanceof Matrix that)) return false;
         return rows == that.rows && cols == that.cols && Objects.deepEquals(values, that.values);
     }
 
