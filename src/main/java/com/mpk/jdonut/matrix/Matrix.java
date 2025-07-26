@@ -1,13 +1,20 @@
-package com.mpk.matrix;
+package com.mpk.jdonut.matrix;
 
-import java.util.Arrays;
-import java.util.Objects;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.ToString;
+
 import java.util.function.DoubleBinaryOperator;
 
+@ToString
+@EqualsAndHashCode
 public sealed class Matrix permits Vec2, Vec3 {
 
-    int rows;
-    int cols;
+    @Getter
+    private final int rows;
+
+    @Getter
+    private final int cols;
 
     protected final double[] values;
 
@@ -26,8 +33,8 @@ public sealed class Matrix permits Vec2, Vec3 {
             throw new IllegalArgumentException("Matrix must have non-zero dimensions.");
         }
 
-        rows = values.length;
-        cols = values[0].length;
+        this.rows = values.length;
+        this.cols = values[0].length;
         this.values = new double[rows * cols];
 
         for (int i = 0; i < rows; i++) {
@@ -36,24 +43,18 @@ public sealed class Matrix permits Vec2, Vec3 {
             }
 
             for (int j = 0; j < cols; j++) {
-                set(i, j, values[i][j]);
+                this.values[i * cols + j] = values[i][j];
             }
         }
     }
 
     public double get(int row, int col) {
-        checkBounds(row, col);
         return values[row * cols + col];
-    }
-
-    public void set(int row, int col, double value) {
-        checkBounds(row, col);
-        values[row * cols + col] = value;
     }
 
     public Matrix matmul(Matrix other) {
         if (other.rows != this.cols) {
-            throw new IllegalArgumentException("For matrix multiplication, the number of columns in the first matrix must be equal to the number of rows in the second matrix.");
+            throw new IllegalArgumentException("For matrix multiplication, the number of columns in the first matrix must equal the number of rows in the second matrix.");
         }
 
         Matrix result = new Matrix(this.rows, other.cols);
@@ -113,15 +114,6 @@ public sealed class Matrix permits Vec2, Vec3 {
         return result;
     }
 
-    private void checkBounds(int row, int col) {
-        if (row < 0 || row >= rows) {
-            throw new IndexOutOfBoundsException("Row index out of bounds: " + row);
-        }
-        if (col < 0 || col >= cols) {
-            throw new IndexOutOfBoundsException("Column index out of bounds: " + col);
-        }
-    }
-
     public static Matrix add(Matrix a, Matrix b) {
         return a.add(b);
     }
@@ -141,16 +133,4 @@ public sealed class Matrix permits Vec2, Vec3 {
     public static Matrix matmul(Matrix a, Matrix b) {
         return a.matmul(b);
     }
-
-    @Override
-    public boolean equals(Object o) {
-        if (!(o instanceof Matrix that)) return false;
-        return rows == that.rows && cols == that.cols && Objects.deepEquals(values, that.values);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(rows, cols, Arrays.hashCode(values));
-    }
-
 }
