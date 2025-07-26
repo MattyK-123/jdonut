@@ -16,13 +16,18 @@
     </properties>
 
     <scm>
-        <connection>scm:git:git://github.com/MattyK-123/jdonut.git</connection>
-        <developerConnection>scm:git:git://github.com/MattyK-123/jdonut.git</developerConnection>
+        <connection>https://github.com/MattyK-123/jdonut.git</connection>
+        <developerConnection>git@github.com:MattyK-123/jdonut.git</developerConnection>
         <url>https://github.com/MattyK-123/jdonut</url>
         <tag>HEAD</tag>
     </scm>
 
     <dependencies>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.18.36</version>
+        </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-engine</artifactId>
