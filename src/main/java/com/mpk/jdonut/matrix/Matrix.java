@@ -28,13 +28,11 @@ public class Matrix {
     }
 
     public Matrix(double[][] values) {
-        if (values == null || values.length == 0 || values[0].length == 0) {
+        this(values.length, values[0].length);
+
+        if (values[0].length == 0) {
             throw new IllegalArgumentException("Matrix must have non-zero dimensions.");
         }
-
-        this.rows = values.length;
-        this.cols = values[0].length;
-        this.values = new double[rows * cols];
 
         for (int i = 0; i < rows; i++) {
             if (values[i].length != cols) {
@@ -47,19 +45,25 @@ public class Matrix {
         }
     }
 
+    private Matrix(double x, double y) {
+        this(2, 1);
+        this.values[0] = x;
+        this.values[1] = y;
+    }
+
+    private Matrix(double x, double y, double z) {
+        this(3, 1);
+        this.values[0] = x;
+        this.values[1] = y;
+        this.values[2] = z;
+    }
+
     public static Matrix vec2(double x, double y) {
-        Matrix matrix = new Matrix(2, 1);
-        matrix.values[0] = x;
-        matrix.values[1] = y;
-        return matrix;
+        return new Matrix(x, y);
     }
 
     public static Matrix vec3(double x, double y, double z) {
-        Matrix matrix = new Matrix(3, 1);
-        matrix.values[0] = x;
-        matrix.values[1] = y;
-        matrix.values[2] = z;
-        return matrix;
+        return new Matrix(x, y, z);
     }
 
     public double get(int row, int col) {
@@ -114,20 +118,6 @@ public class Matrix {
         return elementWiseOperation(other, (x, y) -> x / y);
     }
 
-    private Matrix elementWiseOperation(Matrix other, DoubleBinaryOperator operation) {
-        if (other.rows != this.rows || other.cols != this.cols) {
-            throw new IllegalArgumentException("Matrix dimensions do not match.");
-        }
-
-        Matrix result = new Matrix(rows, cols);
-
-        for (int i = 0; i < values.length; i++) {
-            result.values[i] = operation.applyAsDouble(this.values[i], other.values[i]);
-        }
-
-        return result;
-    }
-
     public static Matrix add(Matrix a, Matrix b) {
         return a.add(b);
     }
@@ -147,4 +137,19 @@ public class Matrix {
     public static Matrix matmul(Matrix a, Matrix b) {
         return a.matmul(b);
     }
+
+    private Matrix elementWiseOperation(Matrix other, DoubleBinaryOperator operation) {
+        if (other.rows != this.rows || other.cols != this.cols) {
+            throw new IllegalArgumentException("Matrix dimensions do not match.");
+        }
+
+        Matrix result = new Matrix(rows, cols);
+
+        for (int i = 0; i < values.length; i++) {
+            result.values[i] = operation.applyAsDouble(this.values[i], other.values[i]);
+        }
+
+        return result;
+    }
+
 }
