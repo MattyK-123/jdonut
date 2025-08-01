@@ -8,15 +8,14 @@ import java.util.function.DoubleBinaryOperator;
 
 @ToString
 @EqualsAndHashCode
-public sealed class Matrix permits Vec2, Vec3 {
+public class Matrix {
 
     @Getter
     private final int rows;
-
     @Getter
     private final int cols;
 
-    protected final double[] values;
+    private final double[] values;
 
     public Matrix(int rows, int cols) {
         if (rows <= 0 || cols <= 0) {
@@ -46,6 +45,21 @@ public sealed class Matrix permits Vec2, Vec3 {
                 this.values[i * cols + j] = values[i][j];
             }
         }
+    }
+
+    public static Matrix vec2(double x, double y) {
+        Matrix matrix = new Matrix(2, 1);
+        matrix.values[0] = x;
+        matrix.values[1] = y;
+        return matrix;
+    }
+
+    public static Matrix vec3(double x, double y, double z) {
+        Matrix matrix = new Matrix(3, 1);
+        matrix.values[0] = x;
+        matrix.values[1] = y;
+        matrix.values[2] = z;
+        return matrix;
     }
 
     public double get(int row, int col) {

@@ -1,6 +1,5 @@
-package com.mpk.jdonut.matrix.util;
+package com.mpk.jdonut.matrix;
 
-import com.mpk.jdonut.matrix.Matrix;
 import lombok.experimental.UtilityClass;
 
 import static java.lang.Math.cos;

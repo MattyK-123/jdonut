@@ -1,6 +1,6 @@
 package com.mpk.jdonut.parametrics;
 
-import com.mpk.jdonut.matrix.Vec3;
+import com.mpk.jdonut.matrix.Matrix;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
@@ -11,7 +11,7 @@ import static java.lang.Math.sin;
 @EqualsAndHashCode
 public class Torus implements ParametricShape {
 
-    private final Vec3[] points;
+    private final Matrix[] points;
 
     private final double majorRadius;
     private final double minorRadius;
@@ -51,8 +51,8 @@ public class Torus implements ParametricShape {
         return minorRadius * sin(v);
     }
 
-    private Vec3[] generatePoints() {
-        Vec3[] pts = new Vec3[uSteps * vSteps];
+    private Matrix[] generatePoints() {
+        Matrix[] pts = new Matrix[uSteps * vSteps];
         int index = 0;
 
         double du = 2 * Math.PI / (uSteps - 1);
@@ -62,7 +62,7 @@ public class Torus implements ParametricShape {
             for (int j = 0; j < vSteps; j++) {
                 double u = i * du;
                 double v = j * dv;
-                pts[index++] = new Vec3(
+                pts[index++] = Matrix.vec3(
                         x(u, v),
                         y(u, v),
                         z(v)
@@ -74,7 +74,7 @@ public class Torus implements ParametricShape {
     }
 
     @Override
-    public Vec3[] getPoints() {
+    public Matrix[] getPoints() {
         return points;
     }
 

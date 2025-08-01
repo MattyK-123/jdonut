@@ -1,6 +1,6 @@
-package com.mpk;
+package com.mpk.jdonut;
 
-public class Donut {
+public class Main {
 
     public static void main(String[] args) {
 
