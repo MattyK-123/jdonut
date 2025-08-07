@@ -94,7 +94,7 @@ public sealed class Matrix permits Vec2, Vec3 {
             return Vec3.of(x, y, z);
         }
 
-        Matrix result = new Matrix(rows, cols);
+        Matrix result = new Matrix(rows, other.cols);
 
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < other.cols; j++) {
