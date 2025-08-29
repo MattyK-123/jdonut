@@ -3,19 +3,22 @@ package com.mpk.jdonut.matrix;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
+import org.jspecify.annotations.NullMarked;
 
 import java.util.function.DoubleBinaryOperator;
 
 @ToString
+@NullMarked
 @EqualsAndHashCode
-public sealed class Matrix permits Vec2, Vec3 {
+public final class Matrix {
 
     @Getter
-    protected final int rows;
-    @Getter
-    protected final int cols;
+    private final int rows;
 
-    protected final double[] values;
+    @Getter
+    private final int cols;
+
+    private final double[] values;
 
     public double get(int row, int col) {
         if (row < 0 || row >= rows || col < 0 || col >= cols) {
@@ -29,11 +32,17 @@ public sealed class Matrix permits Vec2, Vec3 {
         return new Matrix(values);
     }
 
+    public static Matrix of(double... values) {
+        return new Matrix(values);
+    }
+
     public static Matrix identity(int size) {
         Matrix result = new Matrix(size, size);
+
         for (int i = 0; i < size; i++) {
             result.values[i * size + i] = 1.0;
         }
+
         return result;
     }
 
@@ -58,7 +67,7 @@ public sealed class Matrix permits Vec2, Vec3 {
             throw new IllegalArgumentException("Matrix dimensions do not match.");
         }
 
-        Matrix result = new Matrix(rows, cols);
+        var result = new Matrix(this.rows, this.cols);
 
         for (int i = 0; i < values.length; i++) {
             result.values[i] = operation.applyAsDouble(values[i], other.values[i]);
@@ -70,28 +79,6 @@ public sealed class Matrix permits Vec2, Vec3 {
     public Matrix matMul(Matrix other) {
         if (cols != other.rows) {
             throw new IllegalArgumentException("For matrix multiplication, the number of columns in the first matrix must equal the number of rows in the second matrix.");
-        }
-
-        if (rows == 2 && other.cols == 1) {
-            double x = 0;
-            double y = 0;
-            for (int k = 0; k < cols; k++) {
-                x += values[k] * other.values[k];
-                y += values[cols + k] * other.values[k];
-            }
-            return Vec2.of(x, y);
-        }
-
-        if (rows == 3 && other.cols == 1) {
-            double x = 0;
-            double y = 0;
-            double z = 0;
-            for (int k = 0; k < cols; k++) {
-                x += values[k] * other.values[k];
-                y += values[cols + k] * other.values[k];
-                z += values[2 * cols + k] * other.values[k];
-            }
-            return Vec3.of(x, y, z);
         }
 
         Matrix result = new Matrix(rows, other.cols);
@@ -110,22 +97,12 @@ public sealed class Matrix permits Vec2, Vec3 {
     }
 
     public Matrix transpose() {
-        Matrix result = new Matrix(cols, rows);
+        var result = new Matrix(this.cols, this.rows);
 
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < cols; j++) {
                 result.values[j * rows + i] = values[i * cols + j];
             }
-        }
-
-        return result;
-    }
-
-    public double[][] toArray() {
-        double[][] result = new double[rows][cols];
-
-        for (int i = 0; i < rows; i++) {
-            System.arraycopy(values, i * cols, result[i], 0, cols);
         }
 
         return result;
@@ -157,16 +134,14 @@ public sealed class Matrix permits Vec2, Vec3 {
         }
     }
 
-    protected Matrix(double x, double y) {
-        rows = 2;
-        cols = 1;
-        values = new double[]{x, y};
-    }
+    private Matrix(double... values) {
+        if (values.length == 0) {
+            throw new IllegalArgumentException("Vector must have at least one element.");
+        }
 
-    protected Matrix(double x, double y, double z) {
-        rows = 3;
-        cols = 1;
-        values = new double[]{x, y, z};
+        this.rows = values.length;
+        this.cols = 1;
+        this.values = values.clone();
     }
 
 }

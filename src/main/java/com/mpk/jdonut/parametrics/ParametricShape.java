@@ -1,8 +1,8 @@
 package com.mpk.jdonut.parametrics;
 
-import com.mpk.jdonut.matrix.Vec3;
+import com.mpk.jdonut.matrix.Matrix;
 
 @FunctionalInterface
 public interface ParametricShape {
-    Vec3[] getPoints();
+    Matrix[] getPoints();
 }
